@@ -1,0 +1,228 @@
+<?php
+ 
+ /*
+  * Implementation of hook_menu()
+  */
+
+//La funcion hook siempre lleva como prefijo el nombre del documento. Las funciones propia no es necesario
+
+
+function rootstack_samples_menu() {
+	$items['clase-3'] = array(
+		'title' => 'Curso #3',
+		'description' => t('This page was created in @name', array('@name' => 'Rootstack')),
+		'page callback' => 'my_first_page',
+		'access arguments' => array('access content'),
+	);
+
+	$items['clase-formulario'] = array(
+		'title' => 'My first form',
+		'description' => t('This form was created in @name', array('@name' => 'Rootstack')),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('register_form'),
+		'access arguments' => array('access content'),
+	);
+	
+
+	return $items;
+}
+
+ /*
+  * Callback from clase-3 menu.
+  */
+function my_first_page() {
+	// return "<H1>" . t('hello world') . "</H1>";
+	return theme("my_first_page");
+}
+
+/*
+ * Implementation of hook_theme().
+ */
+function rootstack_samples_theme(){
+	return array(
+		'my_first_page' => array(
+				'template' => 'template/welcome-page',
+			),
+	);
+}
+
+/*
+ * Implementation of a form().
+ */
+function register_form($form, &$form_state) {
+	$form['register_name'] = array(
+	  '#type' => 'textfield', 
+	  '#title' => t('Name'), 
+
+	);
+	$form['register_name']['#attributes']['placeholder'] = t('Write your name');
+
+	$form['register_lastname'] = array(
+	  '#type' => 'textfield', 
+	  '#title' => t('lastname'), 
+
+	);
+
+	$form['register_age'] = array(
+	  '#type' => 'textfield', 
+	  '#title' => t('age'), 
+
+	);
+/*
+ 	$form['register_gender'] = array(
+		'#type' => 'select',
+		'#title' => t('Gender'),
+		'#options' => array(
+		  0 => t('Male'),
+		  1 => t('Female'),
+		),
+	);
+	
+	$form['pass-confirm'] = array(
+  '#type' => 'password_confirm', 
+  // '#title' => t('Password'), 
+  '#size' => 25,
+);*/
+
+	$form['submit'] = array(
+		'#type' => 'submit', 
+		'#value' => t('Send')
+	);
+
+	// dpm($form, 'form');
+	//$form['#validate'][] = 'custom_validate';
+	return $form;
+}
+
+function register_form_validate(&$elements, &$form_state) {
+  if ($form_state['values']['register_name'] == '') {
+    // form_set_error('register_name', 'Title cannot be empty');
+  }
+
+    if (!is_numeric($form_state['values']['register_age'])) {
+     form_set_error('register_age', 'field cannot be text'); //mensaje de estado en la interfaz
+  }
+}
+
+function register_form_submit($form, &$form_state) {
+	
+	dpm($form_state, 'form');
+	/*dpm($form_state, 'form_state');
+	drupal_set_message('usuario agregado: ' . $form_state['values']['register_name']);
+	watchdog('Rootstack', 'Usuario agregado');	
+*/
+
+//form_state trae la data introducida por el usuario
+	$name=$form_state['values']['register_name']; 
+	$lastname=$form_state['values']['register_lastname'];
+	$edad=$form_state['values']['register_age'];
+
+	_rootstack_samples_insert_data($name ,$lastname, $edad); //Llamando la funcion de insertar valores
+
+	_rootstack_samples_get_data();
+
+}
+function custom_validate(){
+	drupal_set_message('new validate: ');
+
+}
+
+
+/*
+ * Implementation of a insert_data.
+ */
+
+function _rootstack_samples_insert_data($name='', $lastname='', $edad=0){ //funcion para agregar datos a la tabla 'rootstack_sample' de la base de dato
+
+	$items=db_insert('rootstack_sample')
+						->fields(array(
+							'name'=>$name,
+							'lastname'=> $lastname,
+							'edad'=> $edad,
+							)
+						)
+						->execute();
+	dpm($items, 'items');
+}
+
+
+/*
+ * Implementation of get_data.
+ */
+
+function _rootstack_samples_get_data(){ //funcion para hacer Select a la tabla 'rootstack_sample' de la base de dato
+
+	$query=db_select('rootstack_sample', 'alias')
+						->fields('alias')
+						->execute()
+						->fetchAll();
+	dpm($query, 'Query'); // Ver salida de datos
+}
+
+
+/*
+ * Implementation of get_data.
+ */
+
+function _rootstack_samples_delete_data(){ //funcion para hacer Eliminar a la tabla 'rootstack_sample' de la base de dato
+
+	$query=db_delete('rootstack_sample', 'alias')
+						->fields('alias')
+						->condition('name', 'Bidkar')
+						->execute();
+						
+	dpm($query, 'Query-delete'); // Ver salida de datos
+}
+
+
+/*
+*Funcion para crear nodo 
+ */
+
+function _rootstack_samples_create_node($name='', $lastname='', $edad=0){
+$node =new stdclass();
+$node -> type= 'habitantes';
+$node -> language=LANGUAGE_NONE;
+node_object_prepare($node);
+$node -> title=$name;
+$node -> status=1;
+$node -> ud=1;
+$node-> field_apellid['und'][0]['value']=$lastname;
+$node-> field_edad['und'][0]['value']=$edad;
+
+node_save($node);
+
+dpm($node, 'node');
+drupal_set_message('nodo creado');
+}
+
+/*
+ * Implementation of node_insert.
+ */
+
+function _rootstack_samples_node_insert(){
+	drupal_set_message('El nodo fue creado');
+
+}
+
+/*
+ * Implementation of node_update.
+ */
+
+function _rootstack_samples_node_update(){
+	drupal_set_message('El nodo fue creado');
+
+}
+
+function rootstack_samples_taxonomy_term_insert($term){
+	
+
+	drupal_set_message('Fue creado un termino');
+/*
+db_insert('rootstack_sample')
+    ->fields(array(
+      'tid' => $term->tid,
+      'foo' => $term->foo,
+    ))
+    ->execute();*/
+}

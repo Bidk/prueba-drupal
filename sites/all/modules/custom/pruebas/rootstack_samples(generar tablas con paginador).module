@@ -1,0 +1,55 @@
+<?php
+ 
+ /*
+  * Implementation of hook_menu()
+  */
+
+//La funcion hook siempre lleva como prefijo el nombre del documento. Las funciones propia no es necesario
+
+
+function rootstack_samples_menu() {
+	$items['prueba/%'] = array(
+		'title' => 'Curso final',
+    	'page callback' => 'my_first_page',
+   		'page arguments' => array('test', 1),
+    	'access callback' => TRUE
+	);
+
+	return $items;
+}
+
+ /*
+  * Callback from clase-3 menu.
+  */
+
+
+function my_first_page($title = NULL, $v1 = 5) {
+
+  $node_b = db_select('node', 'n')->extend('PagerDefault');
+  $node_b->fields('n', array('nid' ,'title' ));
+  $node_b->condition('type', 'habitantes');
+  $node_b->range(0, $v1);
+  $node_b->limit(10)->orderBy("n.nid");
+
+  $nodes = $node_b->execute()->fetchAll();
+ //dpm($nodes, 'Nodos');
+
+ $header = array('Node ID', 'Title');
+ $rows = array();
+
+ foreach ($nodes as $node) {
+    $rows[] = array(
+      $node->nid,
+      $node->title
+    );
+  }
+
+  $resultado= array('header'=>$header, 'rows'=>$rows);
+
+  $output["content"] = array("#markup" => theme('table', $resultado));
+
+  $output["pager"] = array("#theme" => "pager");
+  return $output;
+
+}
+

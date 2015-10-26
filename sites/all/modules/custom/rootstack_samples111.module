@@ -1,0 +1,95 @@
+<?php
+
+/**
+ * Implements hook_menu().
+ */
+function rootstack_samples_menu() {
+  $items['class-3']=array(
+  'title'=>'Curso #3',
+  'description'=> t('This page was create in @name', array('@name' => 'Bidkar')),
+  'page callback'=>'My_first_page', //funcion para renderizar una pagina
+  'access arguments'=>array('acess content'),
+  );
+
+
+   $items['class-formulario']=array(
+  'title'=>'Formulario 1',
+  'description'=> t('This page was create in @name', array('@name' => 'Bidkar')),
+  'page callback'=>'drupal_get_form',
+  'page arguments'=> array('register_form'),
+  'access arguments'=>array('acess content'),
+  );
+  
+  return $items;
+}
+
+function My_first_page(){
+
+ //return ('<h1>'.'hello word'.'</h1>');
+ //echo 'holaaaaaaaaaaaaaa';
+
+  return theme ('my_first_page');
+  }
+
+
+/**
+ * Implements hook_theme().
+ */
+
+function rootstack_samples_theme(){
+
+return array(
+  'my_first_page'=>array(
+  'template'=>'template/welcome',
+  ),
+);
+
+}
+
+
+/**
+ * Implements form().
+ */
+
+function register_form($form, &$form_state){
+
+  $form['title']= array(
+  '#type' => 'textfield',
+  '#title' => 'name',
+  '#required'=> TRUE,
+  );
+
+  $form['genero']= array(
+  '#type' => 'select' ,
+  '#title' => 'name' ,
+  '#options'=> array(
+    '0' => 'Masculino',
+    '1' => 'Femenino',
+  ),
+  );
+
+$form['submit'] = array(
+  '#type' => 'submit', 
+  '#value' => t('Enviar'),
+  );
+
+dpm($form,'Formulario'); // variable , etiqueta..... debug
+return $form;
+
+}
+
+
+
+/**
+ * Implements form().
+ */
+
+function register_form_submit($form, &$form_state){
+
+  
+}
+
+
+
+
+ ?>

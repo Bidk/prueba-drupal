@@ -1,0 +1,55 @@
+<?php
+
+ /*
+  * Implementation of hook_schema()
+  */
+
+//La funcion hook siempre lleva como prefijo el nombre del documento 
+
+function rootstack_samples_schema(){ // Funcion para crear tabla 'rootstack_sample' en el DB 
+	
+	$schema['rootstack_sample']= array(
+
+	 // Example (partial) specification for table "node".
+    'description' => 'The base table for nodes.',
+    'fields' => array(
+      'name' => array(
+        'description' => 'The primary identifier for a node.',
+        'type' => 'varchar',
+        'length' => 32,
+         ),
+      'lastname' => array(
+        'description' => 'The current node_revision.vid version identifier.',
+        'type' => 'varchar',
+        'length' => 32,
+        'default' => 0,
+      ),
+      'edad' => array(
+        'type' => 'int',
+      ),
+
+    ),
+   );
+
+	return $schema;
+}
+
+ /*
+  * Implementation of install() 
+
+  //para hacerlo efectivo desinstalar modulo y volver a habilitar
+  */
+function rootstack_samples_install(){ // Funcion para crear tabla 'rootstack_sample' en el DB 
+
+  $name='rootstack_sample';
+  $value=100;
+  variable_set($name, $value);
+}
+
+ /*
+  * Implementation of uninstall()
+  */
+function rootstack_samples_uninstall(){ // Funcion para crear tabla 'rootstack_sample' en el DB 
+   
+   variable_delete($name);
+}

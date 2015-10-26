@@ -1,0 +1,4 @@
+name = rootstack samples
+description = Modulo de ejemplo
+package = Rootstack
+core = 7.x
